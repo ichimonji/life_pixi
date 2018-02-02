@@ -5,20 +5,7 @@ const lifeModule = (() => {
 		life = document.getElementById( 'life' ),
 		html_play = '<i class="fa fa-play" aria-hidden="true"></i>',
 		html_stop = '<i class="fa fa-stop" aria-hidden="true"></i>',
-		bt_pl = document.getElementById( 'bt_pl' ),
-		bt_st = document.getElementById( 'bt_st' ),
-		bt_fs = document.getElementById( 'bt_fs' ),
-		bt_rd = document.getElementById( 'bt_rd' ),
-		bt_dl = document.getElementById( 'bt_dl' ),
-		bt_mu = document.getElementById( 'bt_mu' ),
-		bt_md = document.getElementById( 'bt_md' ),
-		bt_ml = document.getElementById( 'bt_ml' ),
-		bt_mr = document.getElementById( 'bt_mr' ),
-		bt_zm = document.getElementById( 'bt_zm' ),
-		bt_ft = document.getElementById( 'bt_ft' ),
-		bt_im = document.getElementById( 'bt_im' ),
-		bt_ex = document.getElementById( 'bt_ex' ),
-		bt_mc = document.getElementById( 'bt_mc' ),
+		bttype = [ 'pl', 'st', 'fs', 'rd', 'dl', 'mu', 'md', 'ml', 'mr', 'zm', 'ft', 'im', 'ex', 'mc' ],
 		tx_if = document.getElementById( 'info' ),
 		tx_im = document.getElementById( 'import_area' ),
 		tx_ex =  document.getElementById( 'export_area' ),
@@ -26,6 +13,7 @@ const lifeModule = (() => {
 		modal = document.getElementById( 'modal' );
 
 	let
+		bt = [],
 		start_flg = true,
 		gen = 0,
 		rate = 0,
@@ -61,8 +49,20 @@ const lifeModule = (() => {
 		},
 		toRGB = cols => {
 			return ( ( cols[0] << 16 ) + ( cols[1] << 8 ) + cols[2] );
+		},
+		addMultiEventListener = ( $targets, events, func, bl ) => {
+			$targets.forEach( $target => {
+				if ( Array.isArray(events) ) {
+					events.forEach( event => {
+						$target.addEventListener( event, func, bl );
+					} );
+				} else {
+					$target.addEventListener( events, func, bl );
+				}
+			} );
 		};
 
+	bttype.forEach( v => bt[v] = document.getElementById( 'bt_' + v ) );
 
 	/* PIXI.js Setting */
 	const type = PIXI.utils.isWebGLSupported() ? 'WebGL': 'canvas';
@@ -114,9 +114,8 @@ const lifeModule = (() => {
 		/* -----------------------------
 		// display information
 		----------------------------- */
-		information: g => {
-			str = 'GEN:' + gen + '<br>RATE:' + rate + '/131072 (' + Math.round( rate / 131072 * 10000 ) / 100 + '%)';
-			tx_if.innerHTML = str;
+		information: () => {
+			tx_if.innerHTML = 'GEN:' + gen + '<br>RATE:' + rate + '/131072 (' + ( ( rate / 13.1072 ) | 0 ) / 100 + '%)';
 		},
 
 		/* -----------------------------
@@ -127,28 +126,23 @@ const lifeModule = (() => {
 				nowColors = startColors;
 				rgb = toRGB( nowColors );
 				rate = 0;
-				for ( z = 0; z < 4096; z++ ) {
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					data[z] = 0;
 					dataNext[z] = 0;
 					texs_cv[z] = [];
 
-					z_u = ( z - 16 ) & 4080;
+					z_u = ( minus( z, 16 ) ) & 4080;
 					z_m = z & 4080;
-					z_b = ( z + 16 ) & 4080;
+					z_b = ( plus( z, 16 ) ) & 4080;
 
-					z_l = ( z - 1 ) & 15;
+					z_l = ( minus( z, 1 ) ) & 15;
 					z_c = z & 15;
-					z_r = ( z + 1 ) & 15;
+					z_r = ( plus( z, 1 ) ) & 15;
 
 					dataMatrix[z] = [
-						z_u | z_l,
-						z_u | z_c,
-						z_u | z_r,
-						z_m | z_l,
-						z_m | z_r,
-						z_b | z_l,
-						z_b | z_c,
-						z_b | z_r
+						z_u | z_l, z_u | z_c, z_u | z_r,
+						z_m | z_l, z_m | z_r,
+						z_b | z_l, z_b | z_c, z_b | z_r
 					];
 
 					for ( z2 = 32; z2--; ) {
@@ -165,7 +159,7 @@ const lifeModule = (() => {
 				renderer_cv.render( stage_cv );
 				gen = 0;
 				func.information( gen, rate );
-				if( start_flg ) bt_rd.click();
+				if( start_flg ) bt.rd.click();
 			};
 		},
 
@@ -178,7 +172,7 @@ const lifeModule = (() => {
 				data = [];
 				dataNext = [];
 				rate = 0;
-				for ( z = 0; z < 4096; z++ ) {
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					data[z] = 0;
 					dataNext[z] = 0;
 					for ( z2 = 32; z2--; ) {
@@ -199,11 +193,11 @@ const lifeModule = (() => {
 				gen = 0;
 				func.information( gen );
 				if( start_flg ){
-					bt_pl.click();
+					bt.pl.click();
 					start_flg = false;
 				}
 			};
-			bt_rd.addEventListener( 'click', randomRun, true );
+			bt.rd.addEventListener( 'click', randomRun, true );
 		},
 
 		/* -----------------------------
@@ -324,15 +318,13 @@ const lifeModule = (() => {
 						e.currentTarget.innerHTML = html_play;
 						cancelAnimationFrame( playTimer );
 					} else {
-						if( bt_pl.value == 'stop' ){
-							bt_pl.click();
-						}
+						if( bt.pl.value == 'stop' ) bt.pl.click();
 						playRun( 'step' );
 					}
 				};
-			bt_st.addEventListener( 'click', playTrriger, true );
-			bt_pl.addEventListener( 'click', playTrriger, true );
-
+			addMultiEventListener(
+				[ bt.st, bt.pl ], 'click', playTrriger, true
+			);
 		},
 
 		/* -----------------------------
@@ -345,7 +337,7 @@ const lifeModule = (() => {
 				rect = life_wrap.getBoundingClientRect();
 				eX = e.changedTouches ? e.changedTouches[0].pageX : e.clientX;
 				eY = e.changedTouches ? e.changedTouches[0].pageY : e.clientY;
-				if( bt_zm.value == 'zoomout' ){
+				if( bt.zm.value == 'zoomout' ){
 					grid_x = ( eX - rect.left - window.pageXOffset ) >>> 2;
 					grid_y = ( eY - rect.top - window.pageYOffset ) >>> 2;
 				} else {
@@ -357,9 +349,7 @@ const lifeModule = (() => {
 				if( e.type === 'mousedown' || e.type === 'touchstart' ){
 					active = 1;
 					DoA = ( data[z] >>> z2 & 1 ) ^ 1;
-				} else if( e.type === 'mouseup' || e.type === 'touchend'){
-					active = 0;
-				} else if( e.type === 'mouseout' ){
+				} else if( e.type === 'mouseup' || e.type === 'touchend' || e.type === 'mouseout'){
 					active = 0;
 				}
 				if( active ){
@@ -379,13 +369,12 @@ const lifeModule = (() => {
 				renderer_cv.render( stage_cv );
 				func.information( gen, rate );
 			};
-			life_wrap.addEventListener( 'mouseup', edit, false );
-			life_wrap.addEventListener( 'mousedown', edit, false );
-			life_wrap.addEventListener( 'mousemove', edit, false );
-			life_wrap.addEventListener( 'mouseout', edit, false );
-			life_wrap.addEventListener( 'touchend', edit, false );
-			life_wrap.addEventListener( 'touchstart', edit, false );
-			life_wrap.addEventListener( 'touchmove', edit, false );
+
+			addMultiEventListener(
+				[ life_wrap ],
+				[ 'mouseup', 'mousedown', 'mousemove', 'mouseout', 'touchend', 'touchstart', 'touchmove' ],
+				edit, false
+			);
 		},
 
 		/* -----------------------------
@@ -393,8 +382,8 @@ const lifeModule = (() => {
 		----------------------------- */
 		deleteSet: () => {
 			const deleteRun = () => {
-				if( bt_pl.value == 'stop' ) bt_pl.click();
-				for ( z = 0; z < 4096; z++ ) {
+				if( bt.pl.value == 'stop' ) bt.pl.click();
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					data[z] = 0;
 					dataNext[z] = 0;
 					for ( z2 = 32; z2--; ) {
@@ -407,7 +396,7 @@ const lifeModule = (() => {
 				gen = 0;
 				func.information( gen );
 			};
-			bt_dl.addEventListener( 'click', deleteRun, false );
+			bt.dl.addEventListener( 'click', deleteRun, false );
 		},
 
 		/* -----------------------------
@@ -426,17 +415,17 @@ const lifeModule = (() => {
 						arrRear = data.slice( 0, 4080 );
 						dataNext = arrFront.concat( arrRear );
 					} else if( direction == 'left' ){
-						for ( z = 0; z < 4096; z++ ) {
+						for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 							dataNext[z] = data[z] << 1 | data[dataMatrix[z][4]] >>> 31;
 						}
 					} else if( direction == 'right' ){
-						for ( z = 0; z < 4096; z++ ) {
+						for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 							dataNext[z] = data[dataMatrix[z][3]] << 31 | data[z] >>> 1;
 						}
 					}
 
 					data = dataNext.slice();
-					for ( z = 0; z < 4096; z++ ) {
+					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						for ( z2 = 32; z2--; ) {
 							if( data[z] >> z2 & 1 ){
 								texs_cv[z][z2].tint = rgb;
@@ -450,37 +439,18 @@ const lifeModule = (() => {
 					renderer_cv.render( stage_cv );
 				},
 				moveControl = e => {
-					ival = e.currentTarget.value;
 					if( e.type == 'mousedown' || e.type == 'touchstart' ){
-						if( ival == 'up' ){
-							moveTimer = setInterval( () => moveRun( 'up' ), 50 );
-						} else if( ival == 'down' ){
-							moveTimer = setInterval( () => moveRun( 'down' ), 50 );
-						} else if( ival == 'left' ){
-							moveTimer = setInterval( () => moveRun( 'left' ), 50 );
-						} else if( ival == 'right' ){
-							moveTimer = setInterval( () => moveRun( 'right' ), 50 );
-						}
+						ival = e.currentTarget.value;
+						moveTimer = setInterval( () => moveRun( ival ), 50 );
 					} else {
 						clearInterval( moveTimer );
 					}
 				};
-			bt_mu.addEventListener( 'mousedown', moveControl, false );
-			bt_mu.addEventListener( 'mouseup', moveControl, false );
-			bt_md.addEventListener( 'mousedown', moveControl, false );
-			bt_md.addEventListener( 'mouseup', moveControl, false );
-			bt_ml.addEventListener( 'mousedown', moveControl, false );
-			bt_ml.addEventListener( 'mouseup', moveControl, false );
-			bt_mr.addEventListener( 'mousedown', moveControl, false );
-			bt_mr.addEventListener( 'mouseup', moveControl, false );
-			bt_mu.addEventListener( 'touchstart', moveControl, false );
-			bt_mu.addEventListener( 'touchend', moveControl, false );
-			bt_md.addEventListener( 'touchstart', moveControl, false );
-			bt_md.addEventListener( 'touchend', moveControl, false );
-			bt_ml.addEventListener( 'touchstart', moveControl, false );
-			bt_ml.addEventListener( 'touchend', moveControl, false );
-			bt_mr.addEventListener( 'touchstart', moveControl, false );
-			bt_mr.addEventListener( 'touchend', moveControl, false );
+			addMultiEventListener(
+				[ bt.mu, bt.md, bt.ml, bt.mr ],
+				[ 'mousedown', 'mouseup', 'touchstart', 'touchend' ],
+				moveControl, false
+			);
 		},
 
 		/* -----------------------------
@@ -496,7 +466,7 @@ const lifeModule = (() => {
 				data = [];
 				dataNext = [];
 				rate = 0;
-				for ( z = 0; z < 4096; z++ ) {
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					data[z] = 0;
 					dataNext[z] = 0;
 					for ( z2 = 32; z2--; ) {
@@ -538,7 +508,7 @@ const lifeModule = (() => {
 					str += '#N no name\n';
 					str += '#C export is gen.=' + gen + ',\n';
 					str += 'x = 512, y = 256, rule = B3/S23:T512,256\n';
-					for ( z = 0; z < 4096; z++ ) {
+					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						dataStr[z] = ( data[z] >>> 0 ).toString( 2 );
 						dataStr[z] = ( '0000000000000000000000000000000' + dataStr[z] ).slice( -32 );
 						if( z % 16 == 0 ) {
@@ -576,11 +546,11 @@ const lifeModule = (() => {
 						modal.style.display = 'none';
 						if( tx_im.value != '' ) lifeImport();
 					}
-					if( ival != 'close' && bt_pl.value == 'stop' ) bt_pl.click();
+					if( ival != 'close' && bt.pl.value == 'stop' ) bt.pl.click();
 				};
-			bt_im.addEventListener( 'click', modalControl, false );
-			bt_ex.addEventListener( 'click', modalControl, false );
-			bt_mc.addEventListener( 'click', modalControl, false );
+			addMultiEventListener(
+				[ bt.im, bt.ex, bt.mc ], 'click', modalControl, false
+			);
 		},
 
 		/* -----------------------------
@@ -589,7 +559,7 @@ const lifeModule = (() => {
 		fastBackward: rule => {
 			const fastBackwardRun = () => {
 				rate = 0;
-				for ( z = 0; z < 4096; z++ ) {
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					data[z] = 0;
 					dataNext[z] = 0;
 					for ( z2 = 32; z2--; ) {
@@ -610,7 +580,7 @@ const lifeModule = (() => {
 				gen = 0;
 				func.information( gen, rate );
 			};
-			bt_fs.addEventListener( 'click', fastBackwardRun, false );
+			bt.fs.addEventListener( 'click', fastBackwardRun, false );
 		},
 
 		/* -----------------------------
@@ -635,7 +605,7 @@ const lifeModule = (() => {
 				if( ival == 'zoomout' ){
 					wd = 0.3333;
 					renderer_cv.resize( 512, 256 );
-					for ( z = 0; z < 4096; z++ ) {
+					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						for ( z2 = 32; z2--; ) {
 							grid_x = ( z << 5 & 511 | 31 ^ z2 );
 							grid_y = ( z >>> 4 );
@@ -653,7 +623,7 @@ const lifeModule = (() => {
 				} else {
 					wd = 1;
 					renderer_cv.resize( 2048, 1024 )
-					for ( z = 0; z < 4096; z++ ) {
+					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						for ( z2 = 32; z2--; ) {
 							grid_x = ( z << 5 & 511 | 31 ^ z2 ) << 2;
 							grid_y = ( z >>> 4 ) << 2;
@@ -671,7 +641,7 @@ const lifeModule = (() => {
 				}
 				renderer_cv.render( stage_cv );
 			};
-			bt_zm.addEventListener( 'click', zoomRun, false );
+			bt.zm.addEventListener( 'click', zoomRun, false );
 		},
 
 		/* -----------------------------
@@ -679,7 +649,7 @@ const lifeModule = (() => {
 		----------------------------- */
 		footprintSet: () => {
 			const footprint = () => {
-				for ( z = 0; z < 4096; z++ ) {
+				for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 					for ( z2 = 32; z2--; ) {
 						if( !( data[z] >> z2 & 1 ) ){
 							texs_cv[z][z2].tint = 0x666666;
@@ -689,7 +659,7 @@ const lifeModule = (() => {
 				}
 				renderer_cv.render( stage_cv );
 			};
-			bt_ft.addEventListener( 'click', footprint, false );
+			bt.ft.addEventListener( 'click', footprint, false );
 		},
 
 		/* -----------------------------
