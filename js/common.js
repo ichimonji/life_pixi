@@ -48,7 +48,7 @@ const lifeModule = (() => {
 			return r1;
 		},
 		toRGB = cols => {
-			return ( ( cols[0] << 16 ) + ( cols[1] << 8 ) + cols[2] );
+			return cols[0] << 16 | cols[1] << 8 | cols[2];
 		},
 		addMultiEventListener = ( $targets, events, func, bl ) => {
 			$targets.forEach( $target => {
@@ -131,13 +131,13 @@ const lifeModule = (() => {
 					dataNext[z] = 0;
 					texs_cv[z] = [];
 
-					z_u = ( minus( z, 16 ) ) & 4080;
+					z_u = minus( z, 16 ) & 4080;
 					z_m = z & 4080;
-					z_b = ( plus( z, 16 ) ) & 4080;
+					z_b = plus( z, 16 ) & 4080;
 
-					z_l = ( minus( z, 1 ) ) & 15;
+					z_l = minus( z, 1 ) & 15;
 					z_c = z & 15;
-					z_r = ( plus( z, 1 ) ) & 15;
+					z_r = plus( z, 1 ) & 15;
 
 					dataMatrix[z] = [
 						z_u | z_l, z_u | z_c, z_u | z_r,
@@ -147,7 +147,7 @@ const lifeModule = (() => {
 
 					for ( z2 = 32; z2--; ) {
 						grid_x = ( z << 5 & 511 | 31 ^ z2 ) << 2;
-						grid_y = ( z >> 4 ) << 2;
+						grid_y = z >> 4 << 2;
 						texs_cv[z][z2] = new PIXI.Sprite(tex);
 						texs_cv[z][z2].position.x = grid_x;
 						texs_cv[z][z2].position.y = grid_y;
@@ -309,13 +309,14 @@ const lifeModule = (() => {
 					if( sw == 'play' ) playTimer = requestAnimationFrame( () => playRun( sw ) ,100 );
 				},
 				playTrriger = e => {
-					if( e.currentTarget.value == 'play' ){
-						e.currentTarget.value = 'stop';
-						e.currentTarget.innerHTML = html_stop;
+					$target = e.currentTarget;
+					if( $target.value == 'play' ){
+						$target.value = 'stop';
+						$target.innerHTML = html_stop;
 						playRun( 'play' );
-					} else if( e.currentTarget.value == 'stop' ){
-						e.currentTarget.value = 'play';
-						e.currentTarget.innerHTML = html_play;
+					} else if( $target.value == 'stop' ){
+						$target.value = 'play';
+						$target.innerHTML = html_play;
 						cancelAnimationFrame( playTimer );
 					} else {
 						if( bt.pl.value == 'stop' ) bt.pl.click();
@@ -607,8 +608,8 @@ const lifeModule = (() => {
 					renderer_cv.resize( 512, 256 );
 					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						for ( z2 = 32; z2--; ) {
-							grid_x = ( z << 5 & 511 | 31 ^ z2 );
-							grid_y = ( z >>> 4 );
+							grid_x = z << 5 & 511 | 31 ^ z2;
+							grid_y = z >>> 4;
 							texs_cv[z][z2].position.x = grid_x;
 							texs_cv[z][z2].position.y = grid_y;
 							texs_cv[z][z2].scale.x = wd;
