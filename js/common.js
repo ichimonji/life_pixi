@@ -47,15 +47,11 @@ const lifeModule = (() => {
 			}
 			return r1;
 		},
-		toRGB = cols => {
-			return cols[0] << 16 | cols[1] << 8 | cols[2];
-		},
+		toRGB = cols => cols[0] << 16 | cols[1] << 8 | cols[2],
 		addMultiEventListener = ( $targets, events, func, bl ) => {
 			$targets.forEach( $target => {
 				if ( Array.isArray(events) ) {
-					events.forEach( event => {
-						$target.addEventListener( event, func, bl );
-					} );
+					events.forEach( event => $target.addEventListener( event, func, bl ) );
 				} else {
 					$target.addEventListener( events, func, bl );
 				}
@@ -70,12 +66,7 @@ const lifeModule = (() => {
 	let
 		stage_cv = new PIXI.Container(),
 		renderer_cv = new PIXI.autoDetectRenderer(
-			2048,
-			1024,
-			{
-				view: life,
-				transparent: true
-			}
+			2048, 1024, { view: life, transparent: true }
 		);
 	life.width = 2048;
 	life.height = 1024;
@@ -115,7 +106,7 @@ const lifeModule = (() => {
 		// display information
 		----------------------------- */
 		information: () => {
-			tx_if.innerHTML = 'GEN:' + gen + '<br>RATE:' + rate + '/131072 (' + ( ( rate / 13.1072 ) | 0 ) / 100 + '%)';
+			tx_if.innerHTML = `GEN:${gen}<br>RATE:${rate}/131072 (${( ( rate / 13.1072 ) | 0 ) / 100}%)`;
 		},
 
 		/* -----------------------------
@@ -152,7 +143,6 @@ const lifeModule = (() => {
 						texs_cv[z][z2].position.x = grid_x;
 						texs_cv[z][z2].position.y = grid_y;
 						texs_cv[z][z2].alpha = 0;
-
 						stage_cv.addChild( texs_cv[z][z2] );
 					}
 				}
@@ -241,9 +231,11 @@ const lifeModule = (() => {
 						nowShift = plus( nowShift, 1 ) % 6;
 						activeShift = ( nowShift ^ 7 ) % 3;
 					}
-					nowColors[0] = plus( nowColors[0], shiftPlan[nowShift][0] );
-					nowColors[1] = plus( nowColors[1], shiftPlan[nowShift][1] );
-					nowColors[2] = plus( nowColors[2], shiftPlan[nowShift][2] );
+					nowColors = [
+						plus( nowColors[0], shiftPlan[nowShift][0] ),
+						plus( nowColors[1], shiftPlan[nowShift][1] ),
+						plus( nowColors[2], shiftPlan[nowShift][2] )
+					];
 					rgb = toRGB( nowColors );
 
 					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
@@ -258,7 +250,7 @@ const lifeModule = (() => {
 						f = data[matrix[5]] << 31 | g >>> 1;
 						h = g << 1 | data[matrix[7]] >>> 31;
 
-						if( !a && !b && !c && !d && !o && !e && !f && !g && !h ) continue;
+						!a && !b && !c && !d && !o && !e && !f && !g && !h continue;
 
 						xab = a & b;
 						a ^= b;
@@ -281,9 +273,7 @@ const lifeModule = (() => {
 						h = b & f;
 						b ^= f;
 						h |= b & d;
-						b ^= d;
-						c ^= g ^ h;
-						x = ~c & b;
+						x = ~( c ^ g ^ h ) & ( b ^ d );
 
 						DoA = dataNext[z] = x & a | o & x & ~a;
 
@@ -473,14 +463,9 @@ const lifeModule = (() => {
 					for ( z2 = 32; z2--; ) {
 						grid_x = ( z << 5 | 31 ^ z2 ) & 511,
 						grid_y = z >>> 4;
-						if( str.length > grid_y ){
-							if( str[grid_y].length > grid_x ){
-								DoA = parseInt( str[grid_y].charAt(grid_x), 10 );
-							} else {
-								DoA = 0;
-							}
-						} else {
-							DoA = 0;
+						DoA = 0
+						if( str.length > grid_y && str[grid_y].length > grid_x ){
+							DoA = parseInt( str[grid_y].charAt(grid_x), 10 );
 						}
 						data[z] = data[z] | ( DoA << z2 );
 						dataNext[z] = dataNext[z] | ( DoA << z2 );
@@ -512,12 +497,12 @@ const lifeModule = (() => {
 					for ( z = 0; z < 4096; z = plus( z, 1 ) ) {
 						dataStr[z] = ( data[z] >>> 0 ).toString( 2 );
 						dataStr[z] = ( '0000000000000000000000000000000' + dataStr[z] ).slice( -32 );
-						if( z % 16 == 0 ) {
+						if( x & 15 == 0 ) {
 							instStr[z>>>4] = dataStr[z];
 						} else {
 							instStr[z>>>4] = instStr[z>>>4] + dataStr[z];
 						}
-						if( z % 16 == 15 ){
+						if( x & 15 == 15 ){
 							instStr[z>>>4] = instStr[z>>>4].replace( /0/g, 'b' ).replace( /1/g, 'o' );
 							instStr[z>>>4] = instStr[z>>>4].replace( /(bb+|oo+)/g, ( r0, r1 ) => r1.length + r1.charAt( 0 ) );
 							instStr[z>>>4] = instStr[z>>>4].replace( /512b/g, '' );
