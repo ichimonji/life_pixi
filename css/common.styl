@@ -1,0 +1,303 @@
+@import 'nib'
+
+// width global
+sm = 768px
+lg = 1200px
+
+// mixins
+// break(media query)
+break(scname)
+  @media only screen and (max-width: scname)
+    {block}
+
+breakUp(scname)
+  @media only screen and (min-width: scname + 1 )
+    {block}
+
+// flex shorthand
+flexer(dir = row, wr = nowrap, jc = flex-start, ai = stretch, ac = stretch)
+  display flex
+  flex-direction dir
+  flex-wrap wr
+  justify-content jc
+  align-items ai
+  align-content ac
+
+html, body
+  height 100vh
+  margin 0
+  padding 0
+  min-width 512px
+
+body
+  height 100vh
+  width 100vw
+  background-color #333
+  position relative
+  overflow hidden
+
+ul, li
+  margin 0
+  padding 0
+
+.container
+  height 100%
+  flexer(column, nowrap, center, center)
+
+.head-title
+  width 100%
+  background-color rgba( 58, 58, 58, .5 )
+  color #999
+  z-index 3
+  box-sizing border-box
+  padding 10px
+  text-align center
+  font-size 24px
+  font-family Helvetica, Arial, sans-serif
+  font-weight bold
+  margin 0
+
+#lifeWrap
+  position relative
+  box-sizing border-box
+  width 100%
+  height 100%
+  overflow hidden
+
+#life
+  position relative
+  top 0
+  left 0
+  z-index 2
+
+.lifein
+  flexer(column, nowrap, center, center)
+  width 100%
+  cursor pointer
+
+.lifecontrol-wrap
+  position fixed
+  bottom -60px
+  right 0
+  left 0
+  width auto
+  margin 0 auto
+  z-index 3
+  box-sizing border-box
+  text-align center
+  font-size 0
+  transition bottom .2s
+
+#info
+  position absolute
+  top -60px
+  left 0
+  color #ccc
+  font-size 16px
+  text-align left
+  padding 10px
+  transition top .2s
+
+body
+  &:hover
+    .lifecontrol-wrap
+      bottom 0
+      transition bottom .2s
+    #info
+      top 0
+      transition top .2s
+
+.lifecontrol-wrap
+  +break(sm)
+    bottom 0
+
+.lifecontrol
+  width auto
+  margin 0 10px 10px
+  padding 0 10px
+  box-sizing border-box
+  text-align center
+  font-size 0
+  display inline-block
+  border-radius 10px
+  background-color rgba( 172, 172, 172, .5 )
+  transition background-color .2s, bottom .2s
+  +break(sm)
+    padding 0 2px 3px
+  &:hover
+    background-color rgba( 172, 172, 172, .8 )
+    transition background-color .2s
+  .bt
+    display inline-block
+    border none
+    font-family Helvetica, Arial, sans-serif
+    font-size 12px
+    background-color #333
+    color #333
+    font-weight bold
+    width 30px
+    height 30px
+    border-radius 15px
+    transition all .2s
+    padding 3px
+    box-sizing border-box
+    overflow hidden
+    margin 8px 4px
+    vertical-align middle
+    text-align center
+    user-select none
+    +break(sm)
+      margin 3px 1px 0
+    &:hover
+      .fa
+        &:before
+          transition background-color .8s
+          background-color #999999
+    .fa
+      &:before
+        background-color #666
+        font-size 12px
+        display block
+        width 24px
+        line-height 24px
+        border-radius 12px
+        transition background-color .2s
+        vertical-align middle
+        background-color #999999
+    &:nth-child(0)
+      &:hover .fa:before
+        background-color #44aa44
+      +break(sm)
+        .fa:before
+          background-color #44aa44
+    &:nth-child(1)
+      &:hover .fa:before
+        background-color #44aa77
+      +break(sm)
+        .fa:before
+          background-color #44aa77
+    &:nth-child(2)
+      &:hover .fa:before
+        background-color #44a9aa
+      +break(sm)
+        .fa:before
+          background-color #44a9aa
+    &:nth-child(3)
+      &:hover .fa:before
+        background-color #4476aa
+      +break(sm)
+        .fa:before
+          background-color #4476aa
+    &:nth-child(4)
+      &:hover .fa:before
+        background-color #4544aa
+      +break(sm)
+        .fa:before
+          background-color #4544aa
+    &:nth-child(5)
+      &:hover .fa:before
+        background-color #7844aa
+      +break(sm)
+        .fa:before
+          background-color #7844aa
+    &:nth-child(6)
+      &:hover .fa:before
+        background-color #aa44a8
+      +break(sm)
+        .fa:before
+          background-color #aa44a8
+    &:nth-child(7)
+      &:hover .fa:before
+        background-color #aa4475
+      +break(sm)
+        .fa:before
+          background-color #aa4475
+    &:nth-child(8)
+      &:hover .fa:before
+        background-color #aa4644
+      +break(sm)
+        .fa:before
+          background-color #aa4644
+    &:nth-child(9)
+      &:hover .fa:before
+        background-color #aa7944
+      +break(sm)
+        .fa:before
+          background-color #aa7944
+    &:nth-child(10)
+      &:hover .fa:before
+        background-color #a7aa44
+      +break(sm)
+        .fa:before
+          background-color #a7aa44
+    &:nth-child(11)
+      &:hover .fa:before
+        background-color #74aa44
+      +break(sm)
+        .fa:before
+          background-color #74aa44
+    &:nth-child(12)
+      &:hover .fa:before
+        background-color #44aa47
+      +break(sm)
+        .fa:before
+          background-color #44aa47
+  .slwrap
+    display inline-block
+    font-family Helvetica, Arial, sans-serif
+    font-size 12px
+    background-color #333
+    color #333
+    font-weight bold
+    height 30px
+    border-radius 15px
+    transition all .2s
+    box-sizing border-box
+    overflow hidden
+    margin 8px 4px
+    vertical-align middle
+    text-align center
+    border 3px solid #333
+    +break(sm)
+      margin 3px 1px 0
+    .sl
+      background-color #666
+      font-size 12px
+      display block
+      height 24px
+      border none
+      border-radius 12px
+      transition background-color .2s
+      vertical-align middle
+      color #aaa
+      text-align center
+      margin 0 -20px
+      padding 0 30px
+      +break(sm)
+        background-color #999999
+        color #333
+      &:hover
+        background-color #999999
+        color #333
+      option
+        padding 4px
+
+.mo
+  max-width 80vw
+  width 500px
+  max-height 60vh
+  height 500px
+
+#modal
+  position fixed
+  top 0
+  height 100vh
+  left 0
+  width 100vw
+  flexer(column, nowrap, center, center)
+  background-color rgba(0, 0, 0, .5)
+  z-index 8
+  &[data-modal=hide]
+    display none
+
+

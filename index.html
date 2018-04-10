@@ -1,66 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
     <title>Conway's Game of Life (PIXI.js)</title>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <link rel="stylesheet" href="css/common.css">
-</head>
-<body>
+  </head>
+  <body>
     <div id="info"></div>
     <section class="container">
-        <div class="lifein">
-            <div class="lifein-inner">
-                <div id="lifeWrap">
-                    <canvas id="life"></canvas>
-                </div>
-            </div>
+      <div class="lifein">
+        <div class="lifein-inner">
+          <div id="lifeWrap">
+            <canvas id="life"></canvas>
+          </div>
         </div>
+      </div>
     </section>
     <div class="lifecontrol-wrap">
-        <div class="lifecontrol">
-            <div class="bt-group bt-line">
-                <button class="bt" id="bt_pl" title="play/stop" value="play"><i class="fa fa-play" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_fs" title="fast backward" value="step"><i class="fa fa-fast-backward" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_st" title="step play" value="step"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_rd" title="random set" value="random"><i class="fa fa-random" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_dl" title="all delete" value="delete"><i class="fa fa-ban" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_mu" title="move up" value="up"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_ml" title="move left" value="left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_mr" title="move right" value="right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_md" title="move down" value="down"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_zm" title="zoom in/out" value="zoomout"><i class="fa fa-arrows-alt" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_ft" title="footprint" value="foot"><i class="fa fa-bolt" aria-hidden="true"></i></button>
-                <div class="slwrap">
-                    <select class="sl" name="set" id="sl_set">
-                        <option value="none" selected="selected">- not select -</option>
-                        <option value="Spacefiller">Spacefiller</option>
-                        <option value="Boatstretcher">Boatstretcher</option>
-                        <option value="Glider-stream-crystal">Glider-stream-crystal</option>
-                        <option value="P97307852711">P97307852711</option>
-                        <option value="C4 Diagonal SpaceShips">C4 Diagonal SpaceShips</option>
-                        <option value="C4 Orthogonal SpaceShips">C4 Orthogonal SpaceShips</option>
-                        <option value="Superstable">Superstable</option>
-                        <option value="P30 Racetrack">P30 Racetrack</option>
-                        <option value="P2780 Moving Racetrack">P2780 Moving Racetrack</option>
-                        <option value="Unique Oscillators">Unique Oscillators</option>
-                        <option value="Lightspeed-Bubble">Lightspeed-Bubble</option>
-                    </select>
-                </div>
-                <button class="bt" id="bt_im" title="import rle file" value="import"><i class="fa fa-upload" aria-hidden="true"></i></button>
-                <button class="bt" id="bt_ex" title="export rle file" value="export"><i class="fa fa-download" aria-hidden="true"></i></button>
-            </div>
+      <div class="lifecontrol">
+        <div class="bt-group bt-line">
+          <button class="bt" id="bt_pl" title="play/stop" value="play"><i class="fa fa-play" aria-hidden></i></button>
+          <button class="bt" id="bt_fs" title="fast backward" value="step"><i class="fa fa-fast-backward" aria-hidden></i></button>
+          <button class="bt" id="bt_st" title="step play" value="step"><i class="fa fa-step-forward" aria-hidden></i></button>
+          <button class="bt" id="bt_rd" title="random set" value="random"><i class="fa fa-random" aria-hidden></i></button>
+          <button class="bt" id="bt_dl" title="all delete" value="delete"><i class="fa fa-ban" aria-hidden></i></button>
+          <button class="bt" id="bt_mu" title="move up" value="up"><i class="fa fa-chevron-up" aria-hidden></i></button>
+          <button class="bt" id="bt_ml" title="move left" value="left"><i class="fa fa-chevron-left" aria-hidden></i></button>
+          <button class="bt" id="bt_mr" title="move right" value="right"><i class="fa fa-chevron-right" aria-hidden></i></button>
+          <button class="bt" id="bt_md" title="move down" value="down"><i class="fa fa-chevron-down" aria-hidden></i></button>
+          <button class="bt" id="bt_zm" title="zoom in/out" value="zoomout"><i class="fa fa-arrows-alt" aria-hidden></i></button>
+          <button class="bt" id="bt_ft" title="footprint" value="foot"><i class="fa fa-bolt" aria-hidden></i></button>
+          <div class="slwrap">
+            <select class="sl" id="sl_set" name="set">
+              <option value="none" selected="selected">- not select -</option>
+              <option value="Spacefiller">Spacefiller</option>
+              <option value="Boatstretcher">Boatstretcher</option>
+              <option value="Glider-stream-crystal">Glider-stream-crystal</option>
+              <option value="P97307852711">P97307852711</option>
+              <option value="C4 Diagonal SpaceShips">C4 Diagonal SpaceShips</option>
+              <option value="C4 Orthogonal SpaceShips">C4 Orthogonal SpaceShips</option>
+              <option value="Superstable">Superstable</option>
+              <option value="P30 Racetrack">P30 Racetrack</option>
+              <option value="P2780 Moving Racetrack">P2780 Moving Racetrack</option>
+              <option value="Unique Oscillators">Unique Oscillators</option>
+              <option value="Lightspeed-Bubble">Lightspeed-Bubble</option>
+            </select>
+          </div>
+          <button class="bt" id="bt_im" title="import rle file" value="import"><i class="fa fa-upload" aria-hidden></i></button>
+          <button class="bt" id="bt_ex" title="export rle file" value="export"><i class="fa fa-download" aria-hidden></i></button>
         </div>
+      </div>
     </div>
     <div id="modal" data-modal="hide">
-        <textarea class="mo" id="import_area" cols="30" rows="10"></textarea>
-        <textarea class="mo" id="export_area" cols="30" rows="10"></textarea>
-        <button class="bt" id="bt_mc" value="close"><i class="fa fa-times" aria-hidden="true"></i></button>
+      <textarea class="mo" id="import_area" cols="30" rows="10"></textarea>
+      <textarea class="mo" id="export_area" cols="30" rows="10"></textarea>
+      <button class="bt" id="bt_mc" title="close" value="close"><i class="fa fa-times" aria-hidden></i></button>
     </div>
     <script src="https://pixijs.download/v4.5.2/pixi.min.js"></script>
     <script src="js/life_list.js"></script>
     <script src="js/common.js"></script>
-</body>
+  </body>
 </html>

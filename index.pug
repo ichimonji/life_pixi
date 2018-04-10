@@ -1,0 +1,74 @@
+doctype html
+
+//- mixins
+mixin linkAll( arr )
+  each val in arr
+    link( rel = 'stylesheet', href = val )
+mixin jsAll( arr )
+  each val in arr
+    script( src = val )
+mixin bt( id, title, value, btName )
+  button.bt( id = id, title = title, value = value ) #[i.fa(class = btName, aria-hidden = true)]
+
+//- vars, arrays
+-
+  const
+    $title = 'Conway\'s Game of Life (PIXI.js)'
+    links = [
+      'https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css',
+      'https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css',
+      'css/common.css'
+    ]
+    scripts = [
+      'https://pixijs.download/v4.5.2/pixi.min.js',
+      'js/life_list.js',
+      'js/common.js'
+    ]
+
+html( lang = 'en' )
+  head
+    title= $title
+    meta( charset = 'utf-8' )
+    +linkAll( links )
+  body
+    div#info
+    section.container
+        div.lifein
+            div.lifein-inner
+                div#lifeWrap
+                    canvas#life
+    div.lifecontrol-wrap
+      div.lifecontrol
+        div.bt-group.bt-line
+          +bt( 'bt_pl', 'play/stop', 'play', 'fa-play' )
+          +bt( 'bt_fs', 'fast backward', 'step', 'fa-fast-backward' )
+          +bt( 'bt_st', 'step play', 'step', 'fa-step-forward' )
+          +bt( 'bt_rd', 'random set', 'random', 'fa-random' )
+          +bt( 'bt_dl', 'all delete', 'delete', 'fa-ban' )
+          +bt( 'bt_mu', 'move up', 'up', 'fa-chevron-up' )
+          +bt( 'bt_ml', 'move left', 'left', 'fa-chevron-left' )
+          +bt( 'bt_mr', 'move right', 'right', 'fa-chevron-right' )
+          +bt( 'bt_md', 'move down', 'down', 'fa-chevron-down' )
+          +bt( 'bt_zm', 'zoom in/out', 'zoomout', 'fa-arrows-alt' )
+          +bt( 'bt_ft', 'footprint', 'foot', 'fa-bolt' )
+          div.slwrap
+            select.sl#sl_set( name = 'set' )
+              option( value = 'none' selected = 'selected')= '- not select -'
+              option( value = 'Spacefiller')= 'Spacefiller'
+              option( value = 'Boatstretcher')= 'Boatstretcher'
+              option( value = 'Glider-stream-crystal')= 'Glider-stream-crystal'
+              option( value = 'P97307852711')= 'P97307852711'
+              option( value = 'C4 Diagonal SpaceShips')= 'C4 Diagonal SpaceShips'
+              option( value = 'C4 Orthogonal SpaceShips')= 'C4 Orthogonal SpaceShips'
+              option( value = 'Superstable')= 'Superstable'
+              option( value = 'P30 Racetrack')= 'P30 Racetrack'
+              option( value = 'P2780 Moving Racetrack')= 'P2780 Moving Racetrack'
+              option( value = 'Unique Oscillators')= 'Unique Oscillators'
+              option( value = 'Lightspeed-Bubble')= 'Lightspeed-Bubble'
+          +bt( 'bt_im', 'import rle file', 'import', 'fa-upload' )
+          +bt( 'bt_ex', 'export rle file', 'export', 'fa-download' )
+    div#modal( data-modal = 'hide' )
+      textarea.mo#import_area( cols = 30, rows = 10 )
+      textarea.mo#export_area( cols = 30, rows = 10 )
+      +bt( 'bt_mc', 'close', 'close', 'fa-times' )
+    +jsAll( scripts )
